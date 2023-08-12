@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MsgInput{
   UserChat(String id,text,currentUserdId) async{
+
     var msgbox = await FirebaseFirestore.instance.collection('chatroom').doc(id).collection("masg");
         msgbox.add({
        "msg":text

@@ -1,5 +1,6 @@
 
 
+import 'package:chatapp/ui/auth/utility/firebase_auth.dart';
 import 'package:chatapp/ui/chatScreen/chatpage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -41,14 +42,18 @@ class _AllUserState extends State<AllUser> {
        msg =value.id;
      });
    }
-   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Chat_screen(id: msg,currId: widget.Uid,name: name,)));
+   Navigator.push(context, MaterialPageRoute(builder: (context)=>Chat_screen(id: msg,currId: widget.Uid,name: name,)));
 
 
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        actions: [
+          ElevatedButton(onPressed: ()=>Auth_utility().LogOut(context), child: Text("Logout"))
+        ],
+      ),
       body: StreamBuilder<QuerySnapshot>(
         stream: _usersStream,
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {

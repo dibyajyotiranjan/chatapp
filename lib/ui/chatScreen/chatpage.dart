@@ -24,7 +24,9 @@ class _Chat_screenState extends State<Chat_screen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Icon_d(icon: Icons.arrow_back_rounded,),
+        leading: InkWell(
+          onTap: (){Navigator.pop;},
+            child: Icon_d(icon: Icons.arrow_back_rounded,)),
         title: Text(widget.name),
         actionsIconTheme: IconThemeData(
             opticalSize: 10
@@ -53,6 +55,8 @@ class _Chat_screenState extends State<Chat_screen> {
                     }
 
                     return ListView(
+                      shrinkWrap: true,
+                      reverse: true,
                       children: snapshot.data!.docs.map((DocumentSnapshot document) {
                         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
                         return ChatApp_bodyMsg(sender: data["currid"]==widget.currId?"sender":"",text: data["msg"],);

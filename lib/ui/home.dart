@@ -13,6 +13,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
 
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,7 +21,7 @@ class _MyHomePageState extends State<MyHomePage> {
         children: [
           Expanded(
             flex: 1,
-              child: SizedBox()),
+              child: Image.asset("assets/image/login.jpg",fit: BoxFit.cover,)),
           Expanded(
             flex: 1,
               child: Center(
@@ -39,18 +40,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         },
                         child: Text("Sign in With Mobile No")),
                     ElevatedButton(
-                        onPressed: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>Auth_utility().signInWithGoogle(context: context)));
-                        },
+                        onPressed: ()=>Auth_utility().signInWithGoogle(context: context),
                         child: Text("Sign in With Google")),
-                    ElevatedButton(
-                        onPressed: ()async{
-                          final result =
-                          await FirebaseFirestore.instance.collection('user').doc("JRzLQjnMrdf8laYlgtVx").get();
-                          final documents = result;
-                          print(result.data());
-                        },
-                        child: Text("Sign in With Facebook")),
                   ],
                 ),
               ))

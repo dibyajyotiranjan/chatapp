@@ -26,7 +26,7 @@ class _chat_inputState extends State<chat_input> {
           flex: 7,
           child: Container(
             height: 50,
-            padding: EdgeInsets.all(10),
+            padding: EdgeInsets.all(2),
             //margin: EdgeInsets.only(top: 10,bottom: 10),
             decoration: BoxDecoration(
                 color: Colors.grey[300],
@@ -57,7 +57,7 @@ class _chat_inputState extends State<chat_input> {
                   suffixIconColor: Colors.black54,
                   hintText: "Type a message"
               ),
-              maxLines: null,
+              maxLines: 1,
 
             ),
           ),
@@ -79,7 +79,7 @@ class _chat_inputState extends State<chat_input> {
                   :InkWell(
                   onTap: (){
                     MsgInput().UserChat(widget.id, message.text.toString(),widget.currId);
-                    message.text=="";
+                    message.clear();
                     setState(() {
 
                     });

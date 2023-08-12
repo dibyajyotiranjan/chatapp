@@ -1,12 +1,15 @@
 import 'package:chatapp/ui/auth/email/email_login.dart';
 import 'package:chatapp/ui/chatScreen/chatpage.dart';
+import 'package:chatapp/ui/home.dart';
 import 'package:chatapp/ui/user/all_user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class Auth_utility{
+class Auth_utility {
+
   onEmail_signup({required formkey,required email,required password,required name,required context})async{
     if (formkey.currentState!.validate()) {
       try {
@@ -43,7 +46,8 @@ class Auth_utility{
         var userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
             email: email,
             password: password
-        ).then((value) => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>AllUser(Uid: value.user!.uid))));
+        ).then((value){
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>AllUser(Uid: value.user!.uid)));});
       } on FirebaseAuthException catch (e) {
         if (e.code == 'user-not-found') {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Please input a valid Email")));
@@ -101,6 +105,12 @@ class Auth_utility{
                       User? user = result.user;
 
                       if(user != null){
+                        FirebaseFirestore.instance.collection("user").doc(user.uid).set({
+                          "Uid":user.uid,
+                          "name":"+91" + phone.trim(),
+                          // "email":email,
+                          // "password":password
+                        });
                         Navigator.pushReplacement(context, MaterialPageRoute(
                             builder: (context) => AllUser(Uid: user.uid)
                         ));
@@ -117,24 +127,29 @@ class Auth_utility{
       codeAutoRetrievalTimeout: (String verificationId) {},
     );
   }
-  signInWithGoogle({required context}) async {
-    // Trigger the authentication flow
+  Future<Widget?> signInWithGoogle({required context}) async {
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-    // Obtain the auth details from the request
     final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
 
-    // Create a new credential
     final credential = GoogleAuthProvider.credential(
       accessToken: googleAuth?.accessToken,
       idToken: googleAuth?.idToken,
     );
 
-    // Once signed in, return the UserCredential
     UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
     if(userCredential.user !=null){
-
+      await FirebaseFirestore.instance.collection("user").doc(userCredential.user!.uid).set({
+        "Uid":userCredential.user!.uid,
+        "name":userCredential.user!.displayName,
+        "email":userCredential.user!.email,
+        "password":userCredential.user!.phoneNumber
+      });
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>AllUser(Uid: userCredential.user!.uid)));
     }
+  }
+
+  LogOut(context)async{
+    await FirebaseAuth.instance.signOut().then((value) => Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>MyHomePage()), (route) => false));
   }
 }
