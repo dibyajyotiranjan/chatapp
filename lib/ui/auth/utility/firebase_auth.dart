@@ -1,5 +1,6 @@
 import 'package:chatapp/ui/auth/email/email_login.dart';
 import 'package:chatapp/ui/chatScreen/chatpage.dart';
+import 'package:chatapp/ui/user/all_user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,7 @@ class Auth_utility{
             email: email,
             password: password
         ).then((value){
-          FirebaseFirestore.instance.collection("user").add({
+          FirebaseFirestore.instance.collection("user").doc(value.user!.uid).set({
             "Uid":value.user!.uid,
             "name":name,
             "email":email,
@@ -42,7 +43,7 @@ class Auth_utility{
         var userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
             email: email,
             password: password
-        ).then((value) => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Chat_screen())));
+        ).then((value) => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>AllUser(Uid: value.user!.uid))));
       } on FirebaseAuthException catch (e) {
         if (e.code == 'user-not-found') {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Please input a valid Email")));
@@ -62,7 +63,9 @@ class Auth_utility{
       phoneNumber: "+91" + phone.trim(),
       verificationCompleted: (PhoneAuthCredential credential) async{
 
-        await FirebaseAuth.instance.signInWithCredential(credential).then((value) => Navigator.push(context, MaterialPageRoute(builder: (context)=>Chat_screen())));
+        await FirebaseAuth.instance.signInWithCredential(credential).then((value){
+
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>AllUser(Uid: value.user!.uid)));});
       },
       verificationFailed: (FirebaseAuthException e) {
         if (e.code == 'invalid-phone-number') {
@@ -99,7 +102,7 @@ class Auth_utility{
 
                       if(user != null){
                         Navigator.pushReplacement(context, MaterialPageRoute(
-                            builder: (context) => Chat_screen()
+                            builder: (context) => AllUser(Uid: user.uid)
                         ));
                       }else{
                         print("Error");
@@ -130,7 +133,8 @@ class Auth_utility{
     // Once signed in, return the UserCredential
     UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
     if(userCredential.user !=null){
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Chat_screen()));
+
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>AllUser(Uid: userCredential.user!.uid)));
     }
   }
 }

@@ -1,11 +1,14 @@
 
+import 'package:chatapp/ui/chatScreen/utility/chat_input.dart';
 import 'package:chatapp/ui/widget/chat_screen/file_dialog.dart';
 import 'package:flutter/material.dart';
 
 import 'icon.dart';
 
 class chat_input extends StatefulWidget {
-  const chat_input({Key? key}) : super(key: key);
+  String id;
+  String currId;
+  chat_input({required this.id,required this.currId,Key? key}) : super(key: key);
 
   @override
   State<chat_input> createState() => _chat_inputState();
@@ -32,11 +35,11 @@ class _chat_inputState extends State<chat_input> {
 
             child: TextField(
               controller: message,
-              onChanged: (val){
-                setState(() {
+                onChanged: (val) {
+                  setState(() {
 
-                });
-              },
+                  });
+                },
               decoration: InputDecoration(
                   border: InputBorder.none,
                   prefixIcon: Icon_d(icon: Icons.insert_emoticon),
@@ -54,6 +57,7 @@ class _chat_inputState extends State<chat_input> {
                   suffixIconColor: Colors.black54,
                   hintText: "Type a message"
               ),
+              maxLines: null,
 
             ),
           ),
@@ -71,8 +75,14 @@ class _chat_inputState extends State<chat_input> {
                   onTap: (){
                     print(message.text=="");
                   },
-                  child: Icon_d(icon:Icons.mic_rounded,)):InkWell(
+                  child: Icon_d(icon:Icons.mic_rounded,))
+                  :InkWell(
                   onTap: (){
+                    MsgInput().UserChat(widget.id, message.text.toString(),widget.currId);
+                    message.text=="";
+                    setState(() {
+
+                    });
                   },
                   child: Icon_d(icon: Icons.send,))),
         )

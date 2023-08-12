@@ -7,24 +7,25 @@ import 'package:flutter/material.dart';
 import '../widget/chat_screen/icon.dart';
 
 class Chat_screen extends StatefulWidget {
-  const Chat_screen({Key? key}) : super(key: key);
+  String id;
+  String currId;
+  String name;
+  Chat_screen({required this.id,required this.currId,required this.name,Key? key}) : super(key: key);
 
   @override
   State<Chat_screen> createState() => _Chat_screenState();
 }
 
 class _Chat_screenState extends State<Chat_screen> {
-  List mssr = ["sender","recever dibya jyoti ranjan and thsis is a good handrawterrecever dibya jyoti ranjan and thsis is a good handrawter","","sender","recever","sender","recever","recever","recever","sender","sender","recever","sender","sender","recever","sender","recever","recever","recever","sender","sender","recever","sender","sender","recever","sender","recever","recever","recever","sender","sender","recever","sender","sender","recever","sender","recever","recever","recever","sender","sender","recever","sender","sender","recever","sender","recever","recever","recever","sender","sender","recever","sender","sender","recever","sender","recever","recever","recever","sender","sender","recever","sender","sender","recever","sender","recever","recever","recever","sender","sender","recever","sender","sender","recever","sender","recever","recever","recever","sender","sender","recever","sender","sender","recever","sender","recever","recever","recever","sender","sender","recever","sender","sender","recever","sender","recever","recever","recever","sender"];
-  List imm =["","","dibya","","","",""];
 
-  final Stream<QuerySnapshot> _usersStream = FirebaseFirestore.instance.collection('message').snapshots();
+  late Stream<QuerySnapshot> _usersStream = FirebaseFirestore.instance.collection('chatroom').doc(widget.id).collection("masg").orderBy("currentdate",descending: true).snapshots();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: Icon_d(icon: Icons.arrow_back_rounded,),
-        title: Text("Jonny Wilson"),
+        title: Text(widget.name),
         actionsIconTheme: IconThemeData(
             opticalSize: 10
         ),
@@ -40,14 +41,28 @@ class _Chat_screenState extends State<Chat_screen> {
           children: [
             Expanded(
                 flex: 9,
-                child: ListView.builder(
-                    itemCount: mssr.length,
-                    itemBuilder: (context,index){
-                      return ChatApp_bodyMsg(sender: mssr[index],text: mssr[index],);
-                    })
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: _usersStream,
+                  builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (snapshot.hasError) {
+                      return Text('Something went wrong');
+                    }
+
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Text("Loading");
+                    }
+
+                    return ListView(
+                      children: snapshot.data!.docs.map((DocumentSnapshot document) {
+                        Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                        return ChatApp_bodyMsg(sender: data["currid"]==widget.currId?"sender":"",text: data["msg"],);
+                      }).toList(),
+                    );
+                  },
+                )
             ),
             Expanded(
-                child: chat_input())
+                child: chat_input(id: widget.id,currId: widget.currId,))
 
           ],
         ),

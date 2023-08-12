@@ -54,7 +54,10 @@ class _ChatApp_bodyMsgState extends State<ChatApp_bodyMsg> {
                           Icon(Icons.reply),
                           Icon(Icons.star),
                           Icon(Icons.file_copy_outlined),
-                          Icon(Icons.delete),
+                          InkWell(
+                            onTap: ()async{
+                            },
+                              child: Icon(Icons.delete)),
                           Icon(Icons.share),
                           Icon(Icons.more_horiz),
                         ],

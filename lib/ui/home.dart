@@ -1,6 +1,7 @@
 import 'package:chatapp/ui/auth/email/email_login.dart';
 import 'package:chatapp/ui/auth/phone/phone.dart';
 import 'package:chatapp/ui/auth/utility/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 class MyHomePage extends StatefulWidget {
 
@@ -43,8 +44,11 @@ class _MyHomePageState extends State<MyHomePage> {
                         },
                         child: Text("Sign in With Google")),
                     ElevatedButton(
-                        onPressed: (){
-
+                        onPressed: ()async{
+                          final result =
+                          await FirebaseFirestore.instance.collection('user').doc("JRzLQjnMrdf8laYlgtVx").get();
+                          final documents = result;
+                          print(result.data());
                         },
                         child: Text("Sign in With Facebook")),
                   ],
